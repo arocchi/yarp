@@ -52,10 +52,11 @@ void NetworkClock::delay(double seconds) {
     if (seconds<=0) {
         return;
     }
-    SystemClock c;
+    //SystemClock c;
     double start = now();
     do {
-        c.delay(1e-3);
+        //c.delay(1e-3);
+        port.read(true); // sleep the least amount of time from network clock
     } while (now()-start<seconds);
 }
 
