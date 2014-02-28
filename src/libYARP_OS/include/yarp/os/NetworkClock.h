@@ -11,8 +11,10 @@
 #define _YARP2_NETWORKCLOCK_
 
 #include <yarp/os/Clock.h>
-#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Port.h>
 #include <yarp/os/NetInt32.h>
+#include <yarp/os/Event.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/conf/numeric.h>
 
 namespace yarp {
@@ -22,7 +24,7 @@ namespace yarp {
 };
 
 
-class YARP_OS_API yarp::os::NetworkClock : public Clock {
+class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader {
 public:
     NetworkClock();
     
@@ -31,8 +33,13 @@ public:
     virtual double now();
     virtual void delay(double seconds);
     virtual bool isValid() const;
+
+    virtual bool read(ConnectionReader& reader);
 private:
-    BufferedPort<Bottle> port;
+    Port port;
+    Event tick;
+    Semaphore mutex;
+    
     YARP_INT32 sec;
     YARP_INT32 nsec;
     double t;
