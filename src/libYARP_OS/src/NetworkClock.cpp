@@ -52,11 +52,10 @@ void NetworkClock::delay(double seconds) {
     if (seconds<=0) {
         return;
     }
-    SystemClock c;
     double start = now();
     do {
         tick.wait();
-    } while (now()-start<seconds);
+    } while (seconds - (now()-start) > 1E-12);
 }
 
 bool NetworkClock::isValid() const {
@@ -72,5 +71,6 @@ bool NetworkClock::read(ConnectionReader& reader) {
     t = sec + (nsec*1e-9);
     mutex.post();
     tick.signal();
+    tick.reset();
     return true;
 }
