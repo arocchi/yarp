@@ -138,7 +138,7 @@ public:
         lock();
         getTime(currentRunTV);
         currentRun=toDouble(currentRunTV);
-
+        std::cout << "currentRun: " << currentRun << std::endl;
         if (scheduleReset)
             _resetStat();
 
@@ -161,7 +161,7 @@ public:
 
         if (!suspended) {
             owner.run();
-        }
+        } else std::cout << "Suspended?!?" << std::endl;
 
         count++;
         lock();
@@ -169,6 +169,7 @@ public:
         ACE_Time_Value elapsedTV;
         getTime(elapsedTV);
         double elapsed=toDouble(elapsedTV)-currentRun;
+        std::cout << "elapsed: " << elapsed << std::endl;
 
         //save last
         totalUsed+=elapsed*1000;
@@ -180,6 +181,7 @@ public:
         addTime(sleepPeriodTV,currentRunTV);
         subtractTime(sleepPeriodTV,elapsedTV);
         // Time::delay(sleep_period/1000.0);
+        std::cout << "sleeping for: " << sleepPeriodTV << std::endl;
         sleepThread(sleepPeriodTV);
     }
 

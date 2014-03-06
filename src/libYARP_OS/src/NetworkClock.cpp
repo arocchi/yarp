@@ -54,9 +54,28 @@ void NetworkClock::delay(double seconds) {
     }
     SystemClock c;
     double start = now();
+    int i = 0;
     do {
-        c.delay(1e-3);
-    } while (now()-start<seconds);
+        ++i;
+        std::cout << "delay: loop " << i;
+
+        double now_ = now();
+
+        if(seconds - (now_ - start) < 1E-12) {
+            std::cout << "Asking to sleep for " << seconds - (now_ - start) << "!!!! Returning" << std::endl;
+            return;
+        }
+
+        std::cout << "sleeping for " << seconds - (now_ - start) << std::endl;
+
+
+        c.delay(1);
+        std::cout << "slept for " << now()- now_ << std::endl;
+        std::cout << "remaining: " << seconds - (now() - start) << std::endl;
+        now_ = now();
+        if(now_ - start - seconds > 1E-12)
+            std::cout << "need to sleep for " << seconds - (now_ - start) << std::endl;
+    } while (now() - start - seconds < 1E-12);
 }
 
 bool NetworkClock::isValid() const {
