@@ -7,6 +7,10 @@ cmake_minimum_required(VERSION 2.8.7)
 project(YARP)
 
 # Pick up our CMake scripts - they are all in the conf subdirectory.
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(-std=gnu++0x)
+endif()
+
 set(YARP_MODULE_DIR ${PROJECT_SOURCE_DIR}/conf)
 set(YARP_MODULE_PATH ${YARP_MODULE_DIR})
 if(CMAKE_VERSION VERSION_LESS 3.0.0)
