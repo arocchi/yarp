@@ -51,17 +51,13 @@ double NetworkClock::now() {
 void NetworkClock::delay(double seconds) {
     std::unique_lock<std::mutex> lock(tick_mutex);
 
-    if (seconds<=0) {
+    if (seconds<=1E-12) {
         return;
     }
-    SystemClock c;
     double start = now();
-    int i=0;
     do {
-        i++;
-        std::cout << "waitz! "<<i<<" "<<now()<<" "<<start <<" "<<seconds<< std::endl;
         tick.wait(lock);
-    } while (now()-start<seconds);
+    } while ( seconds - (now()-start) > 1E-12);
 }
 
 bool NetworkClock::isValid() const {
@@ -78,7 +74,6 @@ bool NetworkClock::read(ConnectionReader& reader) {
     nsec = bot.get(1).asInt();
     t = sec + (nsec*1e-9);
     mutex.post();
-    std::cout << "signal!" << std::endl;
     tick.notify_all();
     return true;
 }
