@@ -13,9 +13,11 @@
 #include <yarp/os/Clock.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/NetInt32.h>
-#include <yarp/os/Event.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/conf/numeric.h>
+#include <condition_variable>
+#include <thread>
+#include <chrono>
 
 namespace yarp {
     namespace os {
@@ -37,7 +39,10 @@ public:
     virtual bool read(ConnectionReader& reader);
 private:
     Port port;
-    Event tick;
+
+    std::condition_variable tick;
+    std::mutex tick_mutex;
+
     Semaphore mutex;
     
     YARP_INT32 sec;
