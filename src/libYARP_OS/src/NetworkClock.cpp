@@ -69,8 +69,8 @@ bool NetworkClock::read(ConnectionReader& reader) {
     sec = bot.get(0).asInt();
     nsec = bot.get(1).asInt();
     t = sec + (nsec*1e-9);
-    mutex.post();
     tick.signal();
     tick.reset();
+    mutex.post();
     return true;
 }
