@@ -17,7 +17,7 @@
 
 using namespace yarp::os;
 
-NetworkClock::NetworkClock() : mutex(1) {
+NetworkClock::NetworkClock() : tick(tick_mutex) {
     sec = 0;
     nsec = 0;
     t = 0;
@@ -49,15 +49,16 @@ double NetworkClock::now() {
 }
 
 void NetworkClock::delay(double seconds) {
-    std::unique_lock<std::mutex> lock(tick_mutex);
-
     if (seconds<=1E-12) {
         return;
     }
+
+    tick_mutex.acquire();
     double start = now();
     do {
-        tick.wait(lock);
+        tick.wait();
     } while ( seconds - (now()-start) > 1E-12);
+    tick_mutex.release();
 }
 
 bool NetworkClock::isValid() const {
@@ -74,6 +75,6 @@ bool NetworkClock::read(ConnectionReader& reader) {
     nsec = bot.get(1).asInt();
     t = sec + (nsec*1e-9);
     mutex.post();
-    tick.notify_all();
+    tick.broadcast();
     return true;
 }

@@ -15,9 +15,8 @@
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/conf/numeric.h>
-#include <condition_variable>
-#include <thread>
-#include <chrono>
+
+#include <ace/Synch.h>
 
 namespace yarp {
     namespace os {
@@ -40,8 +39,12 @@ public:
 private:
     Port port;
 
-    std::condition_variable tick;
-    std::mutex tick_mutex;
+    /** look at
+     *  http://huihoo.org/ace_tao/ACE-5.2+TAO-1.2/ACE_wrappers/docs/tutorials/016/page02.html
+     *  for a wrapper implementation of ACE_Condition
+     */
+    ACE_Condition_Thread_Mutex tick;
+    ACE_Thread_Mutex tick_mutex;
 
     Semaphore mutex;
     
